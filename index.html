@@ -7,7 +7,15 @@
   <h1>Welcome to Socket.IO Chat</h1>
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io();
+    const socket = io(); 
+     
+    // listen server side event
+    socket.on('message', (data) => {
+      document.write(data)
+    }) 
+   
+    // send message to server
+    socket.emit('customMessageFromClient', 'Hello from client!')
   </script>
 </body>
 </html>

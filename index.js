@@ -8,10 +8,20 @@ const io = require('socket.io')(http);
  })  
 
  io.on('connection', (socket) => {
-    console.log('A user connected', socket.id); 
+    console.log('a user connected', socket.id);  
+     
+    // send message to client after 3 seconds
+     setTimeout(() => {
+          socket.emit('message', 'Hello from server after 3 seconds');
+     }, 3000);
+      
 
+     // listen client side event
+     socket.on('customMessageFromClient', (data) => {
+            console.log( data);
+     })
     socket.on('disconnect', () => {
-        console.log('A user disconnected', socket.id);
+        console.log('user disconnected', socket.id);
     })
  })
 
