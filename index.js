@@ -5,22 +5,23 @@ const io = require('socket.io')(http);
 
  app.get('/', function(req,res){
     res.sendFile(__dirname + '/index.html');
- })  
+ })    
+
+
+ let users = 0; 
 
  io.on('connection', (socket) => {
     console.log('a user connected', socket.id);  
-     
-    // send message to client after 3 seconds
-     setTimeout(() => {
-          socket.emit('message', 'Hello from server after 3 seconds');
-     }, 3000);
       
+    users++;
+    socket.emit('newUserConnected', {message:  'Hi Welcome to the chat'});
 
-     // listen client side event
-     socket.on('customMessageFromClient', (data) => {
-            console.log( data);
-     })
+    socket.broadcast.emit('newUserConnected', { message: `${users}  user connected`})
+     
     socket.on('disconnect', () => {
+
+      users--;
+      socket.broadcast.emit('newUserConnected', { message: `${users}  user connected`})
         console.log('user disconnected', socket.id);
     })
  })
