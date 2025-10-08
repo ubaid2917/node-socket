@@ -9,10 +9,10 @@
   <script>
     const socket = io();   
 
-    socket.on('newUserConnected', (data) => {
-      document.write(data.message + '<br>');
-    });
-     
+     socket.on('newUserConnected', (data) => {
+      document.body.innerHTML = '';
+        document.write(data.message + '<br/>');
+     })
 
   </script>
 </body>
