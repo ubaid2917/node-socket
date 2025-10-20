@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Socket.IO Chat</title>
-</head>
-<body>
-  <h1>Welcome to Socket.IO Chat</h1>
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();   
+  <head>
+    <title>Socket.IO Chat</title>
+  </head>
+  <body>
+    <h1>Welcome to Socket.IO Chat</h1>
 
-     socket.on('newUserConnected', (data) => {
-      document.body.innerHTML = '';
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      socket.on('connectedRoom', (data) => {
+        document.body.innerHTML = '';
         document.write(data.message + '<br/>');
-     })
-
-  </script>
-</body>
+      });
+    </script>
+  </body>
 </html>

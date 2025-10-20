@@ -1,31 +1,45 @@
-const app = require('express')();
-const http = require('http').Server(app);
-const path = require('path'); 
-const io = require('socket.io')(http);
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const { Server } = require('socket.io');
 
- app.get('/', function(req,res){
-    res.sendFile(__dirname + '/index.html');
- })    
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
+// Serve static files (like index.html)
+app.use(express.static(__dirname));
 
- let users = 0; 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
- io.on('connection', (socket) => {
-    console.log('a user connected', socket.id);  
-      
-    users++;
-    socket.emit('newUserConnected', {message:  'Hi Welcome to the chat'});
+let roomNo = 1;
+let usersInRoom = 0;
 
-    socket.broadcast.emit('newUserConnected', { message: `${users}  user connected`})
-     
-    socket.on('disconnect', () => {
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
 
-      users--;
-      socket.broadcast.emit('newUserConnected', { message: `${users}  user connected`})
-        console.log('user disconnected', socket.id);
-    })
- })
+  socket.join(`room-${roomNo}`);
+  usersInRoom++;
 
-http.listen(3000, () => {
-  console.log('Server listening on port 3000');
+  io.to(`room-${roomNo}`).emit('connectedRoom', {
+    message: `You are in room-${roomNo}`,
+    room: `room-${roomNo}`
+  });
+
+  console.log(`User ${socket.id} joined room-${roomNo}`);
+
+  if (usersInRoom >= 2) {
+    roomNo++;
+    usersInRoom = 0;
+  }
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+server.listen(3000, () => {
+  console.log('Server listening on http://localhost:3000');
 });
